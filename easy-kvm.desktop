@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Easy KVM
+Comment=KVM便捷使用脚本
+Exec="~/.local/share/easy_kvm_scripts/vm.sh"
+Icon=qemu
+Terminal=true
+Type=Application
+Categories=
+GenericName=
