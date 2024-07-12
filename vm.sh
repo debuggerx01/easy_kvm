@@ -94,7 +94,8 @@ function download() {
     echo "$2下载成功"
   else
     echo "$2下载失败"
-    return 1
+    echo "请稍后重试"
+    exit 1
   fi
   mv /tmp/"$1" ~/.local/share/easy_kvm_scripts/
 }
