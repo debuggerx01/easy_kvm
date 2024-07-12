@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-VERSION=0
+VERSION=1
 UPDATE_TIME="2024-07-13"
 
 BASE_URL="https://www.debuggerx.com/easy_kvm/"
@@ -85,7 +85,7 @@ function check_update() {
 
 check_update
 
-# 下载文件到脚本安装路径
+# 下载文件到指定路径
 # params: <文件url> <名称> <目标路径>
 function download() {
   echo "开始下载$2[$BASE_URL$1]"
@@ -97,16 +97,16 @@ function download() {
     echo "请稍后重试"
     exit 1
   fi
-  mv /tmp/"$1" ~/.local/share/easy_kvm_scripts/
+  mv /tmp/"$1" "$3"
 }
 
 # 安装脚本（更新也是它）
 function install_scripts() {
 
-  download vm.sh vm.sh
-  download quickemu.sh quickemu
-  download quickget.sh quickget
-  download easy-kvm.desktop 启动器图标
+  download vm.sh vm.sh ~/.local/share/easy_kvm_scripts/
+  download quickemu.sh quickemu ~/.local/share/easy_kvm_scripts/
+  download quickget.sh quickget ~/.local/share/easy_kvm_scripts/
+  download easy-kvm.desktop 启动器图标 ~/.local/share/applications/
 
   chmod a+x ~/.local/share/easy_kvm_scripts/*.sh
 
