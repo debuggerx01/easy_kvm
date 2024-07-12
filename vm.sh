@@ -70,7 +70,7 @@ function check_update() {
         echo "发现新版本[$VERSION -> $NEW_VERSION]"
         echo "请执行下面的命令更新脚本："
         echo
-        echo "install"
+        echo "curl -sSL https://www.debuggerx.com/easy_kvm/vm.sh | bash -s -- --install"
         echo
         echo "如果不想现在更新，请再次执行本脚本继续使用"
 
