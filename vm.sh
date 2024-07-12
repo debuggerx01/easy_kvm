@@ -135,6 +135,8 @@ function install_scripts() {
 
   if ! cat $RC_FILE | grep -q '.easy_kvm_alias' ; then
 	  cat >> $RC_FILE << EOF
+
+
 # EasyKVM aliases
 if [ -f ~/.easy_kvm_alias ]; then
     . ~/.easy_kvm_alias
