@@ -90,7 +90,7 @@ check_update
 function download() {
   echo "开始下载$2[$BASE_URL$1]"
   curl -o /tmp/"$1" "$BASE_URL$1"
-  if "#!/usr/bin/env bash" in /tmp/"$1" || "Desktop Entry" in /tmp/"$1"; then
+  if grep -q "/usr/bin/env bash" /tmp/"$1" || grep -q "Desktop Entry" /tmp/"$1"; then
     echo "$2下载成功"
   else
     echo "$2下载失败"
@@ -143,7 +143,7 @@ EOF
 
   echo "安装完成!"
   echo "请执行下面的命令(或重启系统)后，点击启动器图标或执行[vm]命令使用"
-  echo
+  echo "source ~/.easy_kvm_alias"
 }
 
 # 获取已安装的虚拟机列表，并检查quickemu虚拟机的安装情况
