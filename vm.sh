@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 
-VERSION=1
-UPDATE_TIME="2024-07-13"
+VERSION=2
+UPDATE_TIME="2024-12-15"
 
 BASE_URL="https://www.debuggerx.com/easy_kvm/"
 
@@ -65,7 +65,7 @@ function check_update() {
     CHECK_TIME=$(cat ~/.local/share/easy_kvm_scripts/check_time.txt)
     NOW=$(date +%F)
     if ! [ "$CHECK_TIME" == "$NOW" ]; then
-      NEW_VERSION=$(curl "$BASE_URL"version.txt)
+      NEW_VERSION=$(curl --max-time 3 "$BASE_URL"version.txt)
       if ! [ "$NEW_VERSION" == $VERSION ]; then
         echo "发现新版本[$VERSION -> $NEW_VERSION]"
         echo "请执行下面的命令更新脚本："
@@ -612,13 +612,25 @@ function show_menu() {
 # 正式进入脚本流程，先检查并安装所需组件
 check_kvm_and_tools
 
+if [ -f ~/.local/share/easy_kvm_scripts/default_args.txt ]; then
+  # 设置IFS为空格，以便read命令可以正确地按空格分割字符串
+  IFS=' '
+  read -ra EXTRA_ARGS <<< "$(cat ~/.local/share/easy_kvm_scripts/default_args.txt)"
+fi
+
 if ! [ "$#" == "0" ]; then
   case $1 in
   "--ssh")
-    EXTRA_ARGS=("-nic" "user,hostfwd=tcp::8022-:22")
+    EXTRA_ARGS=("${EXTRA_ARGS[@]}" "-nic" "user,hostfwd=tcp::8022-:22")
+    shift
+    EXTRA_ARGS=("${EXTRA_ARGS[@]}" "$@")
+    echo "${EXTRA_ARGS[@]}"
+    exit 0
     ;;
   "--web")
-    EXTRA_ARGS=("-nic" "user,hostfwd=tcp::8080-:8080")
+    EXTRA_ARGS=("${EXTRA_ARGS[@]}" "-nic" "user,hostfwd=tcp::8080-:8080")
+    shift
+    EXTRA_ARGS=("${EXTRA_ARGS[@]}" "$@")
     ;;
   "--version")
     echo "版本[$VERSION] 更新日期[$UPDATE_TIME]"
@@ -627,7 +639,10 @@ if ! [ "$#" == "0" ]; then
   "--install")
     install_scripts
     exit 0
-  ;;
+    ;;
+  *)
+    EXTRA_ARGS=("${EXTRA_ARGS[@]}" "$@")
+    ;;
   esac
 fi
 
