@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 
-VERSION=2
-UPDATE_TIME="2024-12-15"
+VERSION=6
+UPDATE_TIME="2025-02-11"
 
-BASE_URL="https://www.debuggerx.com/easy_kvm/"
+BASE_URL="https://easy-kvm-storage.debuggerx.com/"
 
 # 确保脚本目录和虚拟机镜像目录存在
 mkdir -p ~/.local/share/easy_kvm_scripts/
@@ -65,12 +65,12 @@ function check_update() {
     CHECK_TIME=$(cat ~/.local/share/easy_kvm_scripts/check_time.txt)
     NOW=$(date +%F)
     if ! [ "$CHECK_TIME" == "$NOW" ]; then
-      NEW_VERSION=$(curl --max-time 3 "$BASE_URL"version.txt)
+      NEW_VERSION=$(curl --max-time 5 "$BASE_URL"version.txt)
       if ! [ "$NEW_VERSION" == $VERSION ]; then
         echo "发现新版本[$VERSION -> $NEW_VERSION]"
         echo "请执行下面的命令更新脚本："
         echo
-        echo "curl -sSL https://www.debuggerx.com/easy_kvm/vm.sh | bash -s -- --install"
+        echo "curl -sSL https://easy-kvm-storage.debuggerx.com/vm.sh | bash -s -- --install"
         echo
         echo "如果不想现在更新，请再次执行本脚本继续使用"
 
@@ -112,6 +112,10 @@ function install_scripts() {
 
   if [ -e ~/.easy_kvm_alias ]; then
     rm ~/.easy_kvm_alias
+  fi
+
+  if [ -e ~/.local/share/applications/easy-kvm.desktop ]; then
+    sed -i "s%\"~%\"$HOME%g" ~/.local/share/applications/easy-kvm.desktop
   fi
 
   {
@@ -638,6 +642,21 @@ if ! [ "$#" == "0" ]; then
     ;;
   "--install")
     install_scripts
+    exit 0
+    ;;
+  "--params")
+    if [ -e ~/.local/share/easy_kvm_scripts/default_args.txt ]; then
+      cat ~/.local/share/easy_kvm_scripts/default_args.txt
+    else
+      echo '未设置默认参数'
+      echo '请使用 [vm --set-params] 命令设置'
+      echo '例如: vm --set-params -nic user,hostfwd=tcp::8080-:8080 -vga virtio'
+    fi
+    exit 0
+    ;;
+  "--set-params")
+    shift
+    echo "$@" > ~/.local/share/easy_kvm_scripts/default_args.txt
     exit 0
     ;;
   *)
